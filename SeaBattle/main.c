@@ -1,5 +1,6 @@
 #include <windows.h>
 #include <glad/glad.h>
+#include "visual.h"
 
 #pragma comment(lib, "opengl32.lib")
 
@@ -51,11 +52,19 @@ int WINAPI WinMain(HINSTANCE hInstance,
         hInstance,
         NULL);
 
+    InitializeGame();
+
     /* enable OpenGL for the window */
     EnableOpenGL(hwnd, &hDC, &hRC);
     gladLoadGL();
 
+    InitializeVisual();
+
     ShowWindow(hwnd, nCmdShow);
+
+    RECT rect;
+    GetClientRect(hwnd, &rect);
+    Rescale(rect.right, rect.bottom);
 
     /* program main loop */
     while (!bQuit)
@@ -83,7 +92,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
             glPushMatrix();
 
-
+            DrawMain();
 
             glPopMatrix();
 
@@ -112,6 +121,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case WM_DESTROY:
         return 0;
+
+    case WM_SIZE:
+        Rescale(LOWORD(lParam), HIWORD(lParam));
+        break;
 
     case WM_KEYDOWN:
     {
