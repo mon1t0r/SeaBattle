@@ -29,6 +29,78 @@ void InitializeGame()
 	FreePlaceVariantSet(computerVarSet);
 }
 
+bool CheckCellExists(int xCell, int yCell)
+{
+	return xCell >= 0 && xCell < FIELD_SIZE &&
+		yCell >= 0 && yCell < FIELD_SIZE;
+}
+
+bool CheckCellNearbyShips(Cell matrix[FIELD_SIZE][FIELD_SIZE], int xCell, int yCell, int prevXCell, int prevYCell, bool shouldOpen)
+{
+	bool hasShips = true;
+
+	for (int i = 0; i < 4; ++i)
+	{
+		int x, y;
+		switch (i)
+		{
+		default:
+		case 0:
+			x = xCell + 1;
+			y = yCell;
+			break;
+		case 1:
+			x = xCell - 1;
+			y = yCell;
+			break;
+		case 2:
+			x = xCell;
+			y = yCell + 1;
+			break;
+		case 3:
+			x = xCell;
+			y = yCell - 1;
+			break;
+		}
+
+		if (!CheckCellExists(x, y) || (x == prevXCell && y == prevYCell))
+			continue;
+
+		Cell* cell = &matrix[x][y];
+
+		if (cell->hasShip)
+		{
+			if (!cell->isOpen)
+				return false;
+			hasShips = hasShips && CheckCellNearbyShips(matrix, x, y, xCell, yCell, shouldOpen);
+		}
+
+
+		if (shouldOpen)
+			for (int x1 = xCell - 1; x1 <= xCell + 1; ++x1)
+				for (int y1 = yCell - 1; y1 <= yCell + 1; ++y1)
+				{
+					if (!CheckCellExists(x1, y1))
+						continue;
+
+					Cell* cell1 = &matrix[x1][y1];
+
+					if (!cell1->isOpen && !cell1->hasShip)
+						cell1->isOpen = true;
+				}
+	}
+
+	return hasShips;
+}
+
+void OpenCell(Cell matrix[FIELD_SIZE][FIELD_SIZE], int xCell, int yCell)
+{
+	Cell* cell = &matrix[xCell][yCell];
+	cell->isOpen = true;
+	if (cell->hasShip && CheckCellNearbyShips(matrix, xCell, yCell, -1, -1, false))
+		CheckCellNearbyShips(matrix, xCell, yCell, -1, -1, true);
+}
+
 void HandleMouseClick(int mouseX, int mouseY, int viewport[4])
 {
 	float x = ((mouseX - viewport[0]) / (float)viewport[2] - 0.5f) * 2.0f;
@@ -43,5 +115,5 @@ void HandleMouseClick(int mouseX, int mouseY, int viewport[4])
 	if (xCell >= FIELD_SIZE || yCell >= FIELD_SIZE)
 		return;
 
-	computerMatrix[xCell][yCell].isOpen = true;
+	OpenCell(computerMatrix, xCell, yCell);
 }
