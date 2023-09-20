@@ -27,12 +27,18 @@
     <ClCompile Include="visual.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ship_gen.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="visual.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ship_gen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
