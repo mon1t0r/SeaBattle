@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "game.h"
 #include "ship_gen.h"
+#include "ship_ai.h"
 
 Cell playerMatrix[FIELD_SIZE][FIELD_SIZE];
 Cell computerMatrix[FIELD_SIZE][FIELD_SIZE];
@@ -93,12 +94,19 @@ bool CheckCellNearbyShips(Cell matrix[FIELD_SIZE][FIELD_SIZE], int xCell, int yC
 	return hasShips;
 }
 
-void OpenCell(Cell matrix[FIELD_SIZE][FIELD_SIZE], int xCell, int yCell)
+bool OpenCell(Cell matrix[FIELD_SIZE][FIELD_SIZE], int xCell, int yCell)
 {
 	Cell* cell = &matrix[xCell][yCell];
+
+	if (cell->isOpen)
+		return false;
+
 	cell->isOpen = true;
+
 	if (cell->hasShip && CheckCellNearbyShips(matrix, xCell, yCell, -1, -1, false))
 		CheckCellNearbyShips(matrix, xCell, yCell, -1, -1, true);
+
+	return true;
 }
 
 void HandleMouseClick(int mouseX, int mouseY, int viewport[4])
@@ -115,5 +123,6 @@ void HandleMouseClick(int mouseX, int mouseY, int viewport[4])
 	if (xCell >= FIELD_SIZE || yCell >= FIELD_SIZE)
 		return;
 
-	OpenCell(computerMatrix, xCell, yCell);
+	if(OpenCell(computerMatrix, xCell, yCell))
+		PerformComputerMove(playerMatrix);
 }

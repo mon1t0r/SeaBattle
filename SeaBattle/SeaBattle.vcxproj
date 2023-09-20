@@ -131,11 +131,13 @@
     <ClCompile Include="game.c" />
     <ClCompile Include="glad\src\glad.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="ship_ai.c" />
     <ClCompile Include="ship_gen.c" />
     <ClCompile Include="visual.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h" />
+    <ClInclude Include="ship_ai.h" />
     <ClInclude Include="ship_gen.h" />
     <ClInclude Include="visual.h" />
   </ItemGroup>

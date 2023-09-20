@@ -30,6 +30,9 @@
     <ClCompile Include="ship_gen.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ship_ai.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -39,6 +42,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ship_gen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ship_ai.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

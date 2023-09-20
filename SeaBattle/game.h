@@ -13,3 +13,4 @@ extern Cell computerMatrix[FIELD_SIZE][FIELD_SIZE];
 
 void InitializeGame();
 void HandleMouseClick(int, int, int[4]);
+void OpenCell(Cell[FIELD_SIZE][FIELD_SIZE], int, int);
