@@ -87,8 +87,8 @@ void DrawCellGrid(Cell matrix[FIELD_SIZE][FIELD_SIZE])
 
 void DrawCell(Cell* cell)
 {
-	/*if (!cell->isOpen)
-		return;*/
+	if (!cell->isOpen)
+		return;
 
 	if (cell->hasShip)
 	{

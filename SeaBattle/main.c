@@ -1,5 +1,6 @@
 #include <windows.h>
 #include <glad/glad.h>
+#include "game.h"
 #include "visual.h"
 
 #pragma comment(lib, "opengl32.lib")
@@ -125,6 +126,14 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_SIZE:
         Rescale(LOWORD(lParam), HIWORD(lParam));
         break;
+
+    case WM_LBUTTONDOWN:
+    {
+        int viewport[4];
+        glGetIntegerv(GL_VIEWPORT, viewport);
+        HandleMouseClick(LOWORD(lParam), HIWORD(lParam), viewport);
+        break;
+    }
 
     case WM_KEYDOWN:
     {
