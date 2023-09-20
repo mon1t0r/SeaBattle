@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include "game.h"
 #include "visual.h"
+#include "messages.h"
 
 #pragma comment(lib, "opengl32.lib")
 
@@ -52,6 +53,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
         NULL,
         hInstance,
         NULL);
+
+    messagesHWND = hwnd;
 
     InitializeGame();
 
@@ -114,6 +117,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    int msgRes;
     switch (uMsg)
     {
     case WM_CLOSE:
@@ -142,6 +146,13 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case VK_ESCAPE:
             PostQuitMessage(0);
             break;
+        case VK_F1:
+        {
+            msgRes = ShowRestartMessageBox();
+            if (msgRes == IDYES)
+                InitializeGame();
+            break;
+        }
         }
     }
 

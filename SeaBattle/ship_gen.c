@@ -9,6 +9,8 @@ void ClearAllIntrWithVariant(ShipPlaceVarSet*, ShipPlaceVar*);
 
 void InitializeMatrix(Cell matrix[FIELD_SIZE][FIELD_SIZE], ShipPlaceVarSet* varSet)
 {
+	memset(matrix, 0, FIELD_SIZE * FIELD_SIZE * sizeof(Cell));
+
 	for (int i = 0; i < SHIP_MAX_SIZE; ++i)
 	{
 		for (int j = SHIP_MAX_SIZE - i; j > 0; --j)

@@ -109,6 +109,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -131,6 +132,7 @@
     <ClCompile Include="game.c" />
     <ClCompile Include="glad\src\glad.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="messages.c" />
     <ClCompile Include="ship_ai.c" />
     <ClCompile Include="ship_gen.c" />
     <ClCompile Include="utils.c" />
@@ -138,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h" />
+    <ClInclude Include="messages.h" />
     <ClInclude Include="ship_ai.h" />
     <ClInclude Include="ship_gen.h" />
     <ClInclude Include="utils.h" />

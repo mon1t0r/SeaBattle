@@ -1,6 +1,6 @@
 #include <stdlib.h>
-#include <stdio.h>
 #include "utils.h"
+#include "messages.h"
 #include "game.h"
 #include "ship_gen.h"
 #include "ship_ai.h"
@@ -8,15 +8,15 @@
 Cell playerMatrix[FIELD_SIZE][FIELD_SIZE];
 Cell computerMatrix[FIELD_SIZE][FIELD_SIZE];
 
+bool isGameOver;
+AIType aiType;
+
 void InitializeGame()
 {
 	srand(time());
 
-	AllocConsole();
-	FILE* fpstdin = stdin, * fpstdout = stdout, * fpstderr = stderr;
-	freopen_s(&fpstdin, "CONIN$", "r", stdin);
-	freopen_s(&fpstdout, "CONOUT$", "w", stdout);
-	freopen_s(&fpstderr, "CONOUT$", "w", stderr);
+	isGameOver = false;
+	aiType = ShowAIMessageBox();
 
 	ShipPlaceVarSet* playerVarSet = CreatePlaceVariantSet();
 	ShipPlaceVarSet* computerVarSet = CreatePlaceVariantSet();
@@ -29,6 +29,43 @@ void InitializeGame()
 
 	FreePlaceVariantSet(playerVarSet);
 	FreePlaceVariantSet(computerVarSet);
+}
+
+bool CheckGameOverForMatrix(Cell matrix[FIELD_SIZE][FIELD_SIZE])
+{
+	for (int i = 0; i < FIELD_SIZE; ++i)
+		for (int j = 0; j < FIELD_SIZE; ++j)
+			if (matrix[i][j].hasShip && !matrix[i][j].isOpen)
+				return false;
+	return true;
+}
+
+bool CheckGameOver()
+{
+	int gameOverResult = -1;
+
+	if (CheckGameOverForMatrix(playerMatrix))
+	{
+		isGameOver = true;
+		gameOverResult = ShowGameOverMessageBox(false);
+	}
+	else if (CheckGameOverForMatrix(computerMatrix))
+	{
+		isGameOver = true;
+		gameOverResult = ShowGameOverMessageBox(true);
+	}
+	
+	switch (gameOverResult)
+	{
+	case IDYES:
+		InitializeGame();
+		break;
+	case IDNO:
+		exit(0);
+		break;
+	}
+
+	return gameOverResult >= 0;
 }
 
 bool CheckCellExists(int xCell, int yCell)
@@ -93,6 +130,9 @@ bool OpenCell(Cell matrix[FIELD_SIZE][FIELD_SIZE], int xCell, int yCell)
 
 void HandleMouseClick(int mouseX, int mouseY, int viewport[4])
 {
+	if (isGameOver)
+		return;
+
 	float x = ((mouseX - viewport[0]) / (float)viewport[2] - 0.5f) * 2.0f;
 	float y = 1.0f - ((mouseY - viewport[1]) / (float)viewport[3] - 0.25f) * 2.0f;
 
@@ -105,6 +145,12 @@ void HandleMouseClick(int mouseX, int mouseY, int viewport[4])
 	if (xCell >= FIELD_SIZE || yCell >= FIELD_SIZE)
 		return;
 
-	if(OpenCell(computerMatrix, xCell, yCell))
-		PerformComputerMove(playerMatrix, Medium);
+	if (OpenCell(computerMatrix, xCell, yCell))
+	{
+		if (!CheckGameOver())
+		{
+			PerformComputerMove(playerMatrix, aiType);
+			CheckGameOver();
+		}
+	}
 }
