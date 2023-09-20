@@ -49,17 +49,13 @@ void InitializeMatrix(Cell matrix[FIELD_SIZE][FIELD_SIZE], ShipPlaceVarSet* varS
 	for (int i = 0; i < SHIP_MAX_SIZE; ++i)
 	{
 		int varIndex = rand() % varSet[i].count;
-		ShipPlaceVar* var = &varSet[i].variants[0];
-		ClearAllIntrWithVariant(varSet, var);
-		printf("%d %d %d %d\n", var->x1, var->x2, var->y1, var->y2);
+		ShipPlaceVar var = varSet[i].variants[varIndex];
+		ClearAllIntrWithVariant(varSet, &var);
+		printf("%d %d %d %d\n", var.x1, var.x2, var.y1, var.y2);
 
-		for (int j = var->x1; j <= var->x2; ++j)
-			for (int k = var->y1; k <= var->y2; ++k)
-			{
-				if (matrix[j][k].hasShip)
-					matrix[j][k].isOpen = false;
+		for (int j = var.x1; j <= var.x2; ++j)
+			for (int k = var.y1; k <= var.y2; ++k)
 				matrix[j][k].hasShip = true;
-			}
 	}
 }
 
@@ -131,11 +127,6 @@ ShipPlaceVar* CreateShipPlaceVar(int startX, int startY, int shipSize, int direc
 		var->y1 = var->y1 - var->y2;
 	}
 
-	if (var->x1 == 0 && var->x2 == 0 && var->y1 == 1 && var->y2 == 3)
-	{
-		int i = 0;
-	}
-
 	return var;
 }
 
@@ -157,48 +148,26 @@ int InitPlaceVariant(int shipSize, ShipPlaceVar* arr)
 bool CheckPlaceVariantsIntersect(ShipPlaceVar* var1, ShipPlaceVar* var2)
 {
 	if (var1 == var2)
-		return false;
+		return true;
 
-	bool x = var1->x1-1 <= var2->x2+1 && var1->x2+1 >= var2->x1-1 &&
-		var1->y2+1 >= var2->y1-1 && var1->y1-1 <= var2->y2+1;
-
-	if (var2->x1 == 0 && var2->x2 == 0 && var2->y1 == 1 && var2->y2 == 3 &&
-		var1->x1 == 0 && var1->x2 == 0 && var1->y1 == 0 && var1->y2 == 0)
-	{
-		int i = 0;
-		if (x)
-			i = 0;
-	}
-
-	if (var1->x1 == 0 && var1->x2 == 0 && var1->y1 == 1 && var1->y2 == 3 &&
-		var2->x1 == 0 && var2->x2 == 0 && var2->y1 == 0 && var2->y2 == 0)
-	{
-		int i = 0;
-		if (x)
-			i = 0;
-	}
-
-	return x;
+	return var1->x1 - 1 < var2->x2 + 1 && var1->x2 + 1 > var2->x1 - 1 &&
+		var1->y2 + 1 > var2->y1 - 1 && var1->y1 - 1 < var2->y2 + 1;
 }
 
 void ClearAllIntrWithVariant(ShipPlaceVarSet* varSetArr, ShipPlaceVar* var)
 {
+	ShipPlaceVar curVar = *var;
 	for (int i = 0; i < SHIP_MAX_SIZE; ++i)
 	{
 		ShipPlaceVar* varArr = varSetArr[i].variants;
 		for (int j = 0; j < varSetArr[i].count; ++j)
 		{
-			if (varArr[j].x1 == 0 && varArr[j].x2 == 0 && varArr[j].y1 == 1 && varArr[j].y2 == 3)
-				printf("st%d\n", j);
-			if (CheckPlaceVariantsIntersect(var, &varArr[j]))
+			if (CheckPlaceVariantsIntersect(&curVar, &varArr[j]))
 			{
-				ShipPlaceVar* oldPtr = &varArr[j];
-				memmove(&varArr[j], &varArr[j + 1], (varSetArr[i].count-- - j - 1) * sizeof(ShipPlaceVar));
+				memmove(&varArr[j], &varArr[j + 1], (varSetArr[i].count - j - 1) * sizeof(ShipPlaceVar));
+				varSetArr[i].count--;
+				j--;
 			}
-			for (int k = 0; k < varSetArr[i].count; ++k)
-				if (varArr[k].x1 == 0 && varArr[k].x2 == 0 && varArr[k].y1 == 1 && varArr[k].y2 == 3)
-				printf("nd%d\n", k);
 		}
-			
 	}
 }
