@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include "utils.h"
 #include "game.h"
 #include "ship_gen.h"
 #include "ship_ai.h"
@@ -43,26 +44,7 @@ bool CheckCellNearbyShips(Cell matrix[FIELD_SIZE][FIELD_SIZE], int xCell, int yC
 	for (int i = 0; i < 4; ++i)
 	{
 		int x, y;
-		switch (i)
-		{
-		default:
-		case 0:
-			x = xCell + 1;
-			y = yCell;
-			break;
-		case 1:
-			x = xCell - 1;
-			y = yCell;
-			break;
-		case 2:
-			x = xCell;
-			y = yCell + 1;
-			break;
-		case 3:
-			x = xCell;
-			y = yCell - 1;
-			break;
-		}
+		MoveByDir(i, xCell, yCell, &x, &y);
 
 		if (!CheckCellExists(x, y) || (x == prevXCell && y == prevYCell))
 			continue;
@@ -124,5 +106,5 @@ void HandleMouseClick(int mouseX, int mouseY, int viewport[4])
 		return;
 
 	if(OpenCell(computerMatrix, xCell, yCell))
-		PerformComputerMove(playerMatrix);
+		PerformComputerMove(playerMatrix, Medium);
 }
