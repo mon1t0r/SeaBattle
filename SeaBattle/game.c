@@ -33,7 +33,7 @@ void InitializeGame()
 	freopen_s(&fpstdout, "CONOUT$", "w", stdout);
 	freopen_s(&fpstderr, "CONOUT$", "w", stderr);
 
-	int maxPlaceVariants = (FIELD_SIZE - 2) * (FIELD_SIZE + 1) * 4 + 8;
+	int maxPlaceVariants = FIELD_SIZE * FIELD_SIZE * 4;
 	ShipPlaceVarSet* playerVarSet = CreatePlaceVariantSet(maxPlaceVariants);
 	ShipPlaceVarSet* computerVarSet = CreatePlaceVariantSet(maxPlaceVariants);
 
@@ -48,14 +48,19 @@ void InitializeMatrix(Cell matrix[FIELD_SIZE][FIELD_SIZE], ShipPlaceVarSet* varS
 {
 	for (int i = 0; i < SHIP_MAX_SIZE; ++i)
 	{
-		int varIndex = rand() % varSet[i].count;
-		ShipPlaceVar var = varSet[i].variants[varIndex];
-		ClearAllIntrWithVariant(varSet, &var);
-		printf("%d %d %d %d\n", var.x1, var.x2, var.y1, var.y2);
+		for (int j = SHIP_MAX_SIZE - i; j > 0; --j)
+		{
+			if (varSet[i].count <= 0)
+				continue;
+			int varIndex = rand() % varSet[i].count;
+			ShipPlaceVar var = varSet[i].variants[varIndex];
+			ClearAllIntrWithVariant(varSet, &var);
+			printf("%d %d %d %d\n", var.x1, var.x2, var.y1, var.y2);
 
-		for (int j = var.x1; j <= var.x2; ++j)
-			for (int k = var.y1; k <= var.y2; ++k)
-				matrix[j][k].hasShip = true;
+			for (int j = var.x1; j <= var.x2; ++j)
+				for (int k = var.y1; k <= var.y2; ++k)
+					matrix[j][k].hasShip = true;
+		}
 	}
 }
 
